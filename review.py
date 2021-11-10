@@ -34,7 +34,7 @@ def function_scope(codebase, start_line):
     # print(codebase)
     # scoped=[]
     scoped=[]
-    scope_rgx="^\s*"
+    scope_rgx="^\s+"
     codebase=codebase.split('\n')[start_line + 1:]
     # print(fr"{codebase}")
     endline=None
@@ -45,10 +45,11 @@ def function_scope(codebase, start_line):
         
         # print("+", codebase[i], re.search(scope_rgx, code_line, re.DEBUG) is not None)
         # print("+", codebase[i], re.search(scope_rgx, code_line) is not None)
+        # res = re.search(scope_rgx, code_line)
         res = re.search(scope_rgx, code_line)
-        if res.span()[1] >= len(code_line) or code_line == "": 
-            continue
         if  res:
+            if res.span()[1] >= len(code_line) or code_line == "": 
+                continue
             # scoped.append(code_line)
             scoped.append(code_line)
             endline=start_line + i + 2
@@ -81,7 +82,7 @@ def function_extraction(codebase, without_input=None, with_input=None):
     return functions
 
 
-def empty_function(): 
+def _empty_function(): 
     pass
 
 
