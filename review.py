@@ -21,12 +21,12 @@ import re
 
 def is_function(codeline, without_input=False, with_input=True):
     if with_input or (with_input is None and without_input is None):
-        func_rgx="def \w*\([\w\s\d\S]*\)[\s]*:"
-        return re.fullmatch(func_rgx, codeline) is not None
+        func_rgx="^def \w*\([\w\s\d\S]*\)[\s]*:"
+        return re.search(func_rgx, codeline) is not None
     
     if without_input:
-        func_rgx="def \w*\(\)[\s]*:"
-        return re.fullmatch(func_rgx, codeline) is not None
+        func_rgx="^def \w*\(\)[\s]*:"
+        return re.search(func_rgx, codeline) is not None
 
     return None
 
@@ -73,7 +73,7 @@ def function_extraction(codebase, without_input=None, with_input=None):
     return functions
 
 
-def empty_function():
+def empty_function(): 
     pass
 
 
