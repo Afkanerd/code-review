@@ -6,22 +6,20 @@
     https://opensource.com/article/17/5/30-best-practices-software-development-and-testing
 
 # Features:
-- Test code based on 
+- Can determine if function can be tested based on:
     - Input / Output
     - State based predictions (globals are bad!!)
+
+- Can extract functions
+    - With inputs
+    - Without inputs
+
+- Can define the boundary scopes of functions (start and end line)
 '''
 
 import re
 
 def is_function(codeline, without_input=False, with_input=True):
-    """
-    if not without_input and not with_input:
-        if is_function(codeline, with_input=True):
-            return True
-        elif is_function(codeline, without_input=True):
-            return True
-    """
-
     if with_input or (with_input is None and without_input is None):
         func_rgx="def \w*\([\w\s\d\S]*\)[\s\t]*:"
         return re.fullmatch(func_rgx, codeline) is not None
@@ -65,5 +63,5 @@ if __name__ == "__main__":
     with open("review.py", 'r') as fd_review:
         codebase = fd_review.read()
 
-    print("* With input:", function_extraction(codebase))
-    print("* Without input:", function_extraction(codebase, without_input=True))
+    print("\n* With input:", function_extraction(codebase))
+    print("\n* Without input:", function_extraction(codebase, without_input=True))
