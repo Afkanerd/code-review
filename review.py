@@ -66,7 +66,7 @@ def function_extraction(codebase, without_input=None, with_input=None):
                     {
                         "start_line":i+1, 
                         "scoped":scoped, 
-                        "endline":endline, 
+                        "end_line":endline, 
                         "line_count":line_count, 
                         "name":codeline})
 
@@ -78,31 +78,55 @@ def empty_function():
 
 
 if __name__ == "__main__":
-    test_function = '''def test_function():\n   print("hello world")'''
-    split_test_function = test_function.split('\n')
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        test_function = '''def test_function():\n   print("hello world")'''
+        split_test_function = test_function.split('\n')
 
-    print("tab test", split_test_function[1][0] == '\t')
-    print("space test", split_test_function[1][0] == ' ')
-    print(">>", is_function(test_function.split('\n')[0]))
+        print("tab test", split_test_function[1][0] == '\t')
+        print("space test", split_test_function[1][0] == ' ')
+        print(">>", is_function(test_function.split('\n')[0]))
 
-    functions=function_extraction(test_function)
-    print(">>", len(functions) == 1)
+        functions=function_extraction(test_function)
+        print(">>", len(functions) == 1)
 
-    scoped, endline, line_count = function_scope(test_function, 0)
-    print(">>", scoped=='\tprint("hello world")', f"endline={endline}", f"line_count={line_count}")
+        scoped, endline, line_count = function_scope(test_function, 0)
+        print(">>", scoped=='\tprint("hello world")', f"endline={endline}", f"line_count={line_count}")
 
-    codebase=None
-    with open("review.py", 'r') as fd_review:
-        codebase = fd_review.read()
+        codebase=None
+        with open("review.py", 'r') as fd_review:
+            codebase = fd_review.read()
 
-    # print("\n* With input:", function_extraction(codebase))
-    # print("\n* Without input:", function_extraction(codebase, without_input=True))
+        # print("\n* With input:", function_extraction(codebase))
+        # print("\n* Without input:", function_extraction(codebase, without_input=True))
 
 
-    func_ext = function_extraction(codebase)
-    func_ext_without_input = function_extraction(codebase, without_input=True)
+        func_ext = function_extraction(codebase)
+        func_ext_without_input = function_extraction(codebase, without_input=True)
 
-    for func in func_ext:
-        print("------------------")
-        print("name:", func['name'])
-        print("scope:", func['scoped'], end='\n\n')
+        for func in func_ext:
+            print("------------------")
+            print("name:", func['name'])
+            print("scope:", func['scoped'], end='\n\n')
+
+    else:
+        if len(sys.argv) < 2:
+            print("Usage: ./review.py <filename>")
+            exit(1)
+
+
+        filename = sys.argv[1]
+        codebase=None
+        with open(filename, 'r') as fd_review:
+            codebase = fd_review.read()
+
+        func_ext = function_extraction(codebase)
+        func_ext_without_input = function_extraction(codebase, without_input=True)
+
+        for func in func_ext:
+            print("------------------")
+            print("name:", func['name'])
+            # print("+ scope:", func['scoped'])
+            print("+ line count", func['line_count'])
+            print("+ start line", func['start_line'])
+            print("+ end line", func['end_line'])
