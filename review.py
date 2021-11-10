@@ -34,7 +34,7 @@ def function_scope(codebase, start_line):
     # print(codebase)
     # scoped=[]
     scoped=[]
-    scope_rgx="^\s+"
+    scope_rgx="^\s+" # SCAM: https://docs.python.org/3/reference/lexical_analysis.html#indentation
     codebase=codebase.split('\n')[start_line + 1:]
     # print(fr"{codebase}")
     endline=None
