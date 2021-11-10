@@ -23,7 +23,7 @@ def is_function(codeline, without_input=False, with_input=True):
     """
 
     if with_input or (with_input is None and without_input is None):
-        func_rgx="def \w*\([\w\s\d,=]*\)[\s\t]*:"
+        func_rgx="def \w*\([\w\s\d\S]*\)[\s\t]*:"
         return re.fullmatch(func_rgx, codeline) is not None
     
     if without_input:
