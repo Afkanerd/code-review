@@ -34,26 +34,33 @@ def function_scope(codebase, start_line):
     # print(codebase)
     # scoped=[]
     scoped=[]
-    scope_rgx="^\s"
+    scope_rgx="^\s*"
     codebase=codebase.split('\n')[start_line + 1:]
     # print(fr"{codebase}")
     endline=None
-    line_count=None
+    line_count=0
+    comment_count = 0
     for i in range(len(codebase)):
         code_line = codebase[i]
-        if code_line == "":
-            continue
+        
         # print("+", codebase[i], re.search(scope_rgx, code_line, re.DEBUG) is not None)
         # print("+", codebase[i], re.search(scope_rgx, code_line) is not None)
-        if re.search(scope_rgx, code_line) is not None:
+        res = re.search(scope_rgx, code_line)
+        if res.span()[1] >= len(code_line) or code_line == "": 
+            continue
+        if  res:
             # scoped.append(code_line)
             scoped.append(code_line)
             endline=start_line + i + 2
             line_count=endline - start_line
+
+            print(code_line, code_line[res.span()[1]], res.span())
+            if (res.span()[1] < len(code_line)) and code_line[res.span()[1]] == '#':
+                comment_count +=1
         else:
             break
 
-    return '\n'.join(scoped), endline, line_count
+    return '\n'.join(scoped), endline, line_count, comment_count
 
 def function_extraction(codebase, without_input=None, with_input=None):
     functions=[]
@@ -61,13 +68,14 @@ def function_extraction(codebase, without_input=None, with_input=None):
     for i in range(len(split_codebase)):
         codeline = split_codebase[i]
         if is_function(codeline, without_input=without_input, with_input=with_input):
-            scoped, endline, line_count = function_scope(codebase, i)
+            scoped, endline, line_count, comment_count = function_scope(codebase, i)
             functions.append(
                     {
                         "start_line":i+1, 
                         "scoped":scoped, 
                         "end_line":endline, 
                         "line_count":line_count, 
+                        "comment_count":comment_count,
                         "name":codeline})
 
     return functions
@@ -128,5 +136,6 @@ if __name__ == "__main__":
             print("name:", func['name'])
             # print("+ scope:", func['scoped'])
             print("+ line count", func['line_count'])
+            print("+ comment count", func['comment_count'])
             print("+ start line", func['start_line'])
             print("+ end line", func['end_line'])
